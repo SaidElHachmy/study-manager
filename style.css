@@ -1,0 +1,655 @@
+
+/* =====================================
+   1. GENERAL SETTINGS
+===================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #176b50;
+    --primary-dark: #104b39;
+    --primary-light: #e7f4ed;
+    --accent: #d9a441;
+    --background: #f3f7f5;
+    --surface: #ffffff;
+    --text: #24372f;
+    --muted: #7b8b83;
+    --danger: #d94b4b;
+    --border: #e4ece7;
+    --shadow: 0 8px 25px rgba(24, 65, 47, 0.07);
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+
+/* =====================================
+   2. HEADER
+===================================== */
+
+header {
+    background: linear-gradient(135deg, #104b39, #176b50, #238363);
+    color: white;
+    text-align: center;
+    padding: 38px 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(16, 75, 57, 0.15);
+}
+
+header::before,
+header::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+header::before {
+    width: 220px;
+    height: 220px;
+    top: -120px;
+    left: -60px;
+}
+
+header::after {
+    width: 280px;
+    height: 280px;
+    bottom: -190px;
+    right: -70px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: clamp(27px, 4vw, 38px);
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+header p {
+    margin: 8px 0 0;
+    color: #d6eee3;
+    font-size: 15px;
+    position: relative;
+}
+
+
+/* =====================================
+   3. MAIN LAYOUT
+===================================== */
+
+main {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 30px 20px;
+    max-width: 1250px;
+    margin: auto;
+}
+
+.subjects,
+.lessons {
+    background: var(--surface);
+    padding: 25px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+}
+
+.subjects {
+    width: 35%;
+}
+
+.lessons {
+    width: 65%;
+    min-height: 450px;
+}
+
+.subjects h2,
+.lessons h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--primary-dark);
+    font-size: 21px;
+}
+
+
+/* =====================================
+   4. INPUTS
+===================================== */
+
+input,
+textarea {
+    width: 100%;
+    padding: 13px 15px;
+    margin: 8px 0;
+    border: 1px solid #dce7e0;
+    border-radius: 10px;
+    background: #fbfdfb;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: 0.25s ease;
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(23, 107, 80, 0.10);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #a0ada5;
+}
+
+textarea {
+    resize: vertical;
+    line-height: 1.7;
+    min-height: 150px;
+}
+
+
+/* =====================================
+   5. BUTTONS
+===================================== */
+
+button {
+    padding: 11px 17px;
+    border: none;
+    border-radius: 9px;
+    background: var(--primary);
+    color: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 5px 2px;
+    transition: background 0.2s ease, transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+button:hover {
+    background: #21815f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(23, 107, 80, 0.15);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+button:focus-visible {
+    outline: 3px solid rgba(217, 164, 65, 0.55);
+    outline-offset: 2px;
+}
+
+#deleteSubject,
+.deleteLesson {
+    background: #d94b4b;
+}
+
+#deleteSubject:hover,
+.deleteLesson:hover {
+    background: #b93636;
+}
+
+#cancelLesson {
+    background: #7c8982;
+}
+
+#cancelLesson:hover {
+    background: #626e67;
+}
+
+.editLesson {
+    background: #3976a5;
+}
+
+.editLesson:hover {
+    background: #285e89;
+}
+
+
+/* =====================================
+   6. SEARCH MESSAGE
+===================================== */
+
+#searchMessage {
+    color: var(--danger);
+    font-size: 14px;
+    min-height: 22px;
+    font-weight: 600;
+}
+
+
+/* =====================================
+   7. SUBJECT LIST
+===================================== */
+
+#subjectList {
+    margin-top: 15px;
+}
+
+.subjectItem {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #f0f7f2;
+    color: var(--primary-dark);
+    padding: 14px 16px;
+    margin: 9px 0;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+.subjectItem:hover {
+    background: var(--primary-light);
+    border-color: #c8e4d3;
+    color: var(--primary-dark);
+}
+
+
+/* =====================================
+   8. LESSON LIST
+===================================== */
+
+#lessonList {
+    margin-top: 20px;
+}
+
+.lessonItem {
+    background: #f8fbf9;
+    border: 1px solid var(--border);
+    padding: 15px;
+    margin: 12px 0;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s ease;
+}
+
+.lessonItem:hover {
+    background: #eff8f2;
+    border-color: #c8e4d3;
+    box-shadow: 0 5px 15px rgba(24, 65, 47, 0.06);
+    transform: translateY(-2px);
+}
+
+.lessonTitle {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--primary-dark);
+    flex: 1;
+    overflow-wrap: anywhere;
+    padding: 5px;
+}
+
+.editLesson,
+.deleteLesson {
+    flex-shrink: 0;
+}
+
+
+/* =====================================
+   9. LESSON FORM
+===================================== */
+
+#lessonForm {
+    background: #f4f9f5;
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 14px;
+    margin: 20px 0;
+}
+
+#lessonForm h3 {
+    color: var(--primary-dark);
+    margin-top: 0;
+}
+
+
+/* =====================================
+   10. WELCOME MESSAGE
+===================================== */
+
+#welcomeMessage {
+    text-align: center;
+    padding: 75px 20px;
+    color: var(--muted);
+}
+
+#welcomeMessage h2 {
+    color: var(--primary-dark);
+    font-size: 25px;
+}
+
+#welcomeMessage p {
+    max-width: 420px;
+    margin: auto;
+    line-height: 1.8;
+}
+
+
+/* =====================================
+   11. READING WINDOW
+===================================== */
+
+.reading-window {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 31, 23, 0.72);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.reading-window.show {
+    display: flex;
+}
+
+.reading-content {
+    background: white;
+    width: 100%;
+    max-width: 850px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: appear 0.25s ease;
+}
+
+#readingTitle {
+    color: var(--primary-dark);
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 15px;
+    margin-top: 0;
+}
+
+#readingBody {
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    color: #34483d;
+    font-size: 16px;
+}
+
+#readingBody img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+#readingBody table {
+    border-collapse: collapse;
+    max-width: 100%;
+    width: 100%;
+    margin: 15px 0;
+}
+
+#readingBody td,
+#readingBody th {
+    border: 1px solid #dce7e0;
+    padding: 10px;
+}
+
+#readingBody th {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+#closeReading {
+    background: #d94b4b;
+    margin-top: 20px;
+}
+
+#closeReading:hover {
+    background: #b93636;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =====================================
+   12. FOOTER
+===================================== */
+
+footer {
+    text-align: center;
+    padding: 25px 15px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+}
+
+
+/* =====================================
+   13. RESPONSIVE DESIGN
+===================================== */
+
+@media (max-width: 800px) {
+    main {
+        gap: 16px;
+        padding: 18px 12px;
+    }
+
+    .subjects,
+    .lessons {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+    header {
+        padding: 30px 12px;
+    }
+
+    main {
+        flex-direction: column;
+        padding: 15px 12px;
+    }
+
+    .subjects,
+    .lessons {
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .lessonItem {
+        flex-wrap: wrap;
+    }
+
+    .lessonTitle {
+        flex-basis: 100%;
+    }
+
+    .reading-content {
+        padding: 20px;
+        max-height: 92vh;
+    }
+
+    #readingBody {
+        font-size: 15px;
+    }
+}
+
+
+/* =====================================
+   14. HIDDEN ELEMENTS
+===================================== */
+
+[hidden] {
+    display: none !important;
+}
+
+/* =====================================
+   DEVELOPER IDENTITY
+===================================== */
+
+.developer-credit {
+    margin-top: 18px;
+    font-size: 13px;
+    color: #d6eee3;
+    letter-spacing: 0.3px;
+}
+
+.developer-credit a {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 2px;
+}
+
+.developer-credit a:hover {
+    color: #f3d48d;
+}
+
+
+/* =====================================
+   PROFESSIONAL DEVELOPER FOOTER
+===================================== */
+
+.developer-footer {
+    text-align: center;
+    padding: 30px 15px;
+    margin-top: 25px;
+    background: #104b39;
+    color: #d6eee3;
+    border-top: 3px solid var(--accent);
+}
+
+.developer-footer p {
+    margin: 7px 0;
+}
+
+.developer-footer .developer-name {
+    font-size: 17px;
+    font-weight: bold;
+    color: white;
+}
+
+.developer-footer .developer-name a {
+    color: #f3d48d;
+    text-decoration: none;
+}
+
+.developer-footer .developer-name a:hover {
+    text-decoration: underline;
+}
+
+.developer-footer .developer-role {
+    font-size: 13px;
+    color: #b8d8c9;
+}
+
+.developer-footer .copyright {
+    margin-top: 18px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 12px;
+    color: #a9c5b7;
+}
+
+/* =====================================
+   15. LANGUAGE SWITCHER
+===================================== */
+
+
+.language-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 22px auto 0;
+    position: relative;
+    z-index: 2;
+}
+
+.language-box label {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#languageSwitcher {
+    width: auto;
+    min-width: 125px;
+    margin: 0;
+    padding: 9px 30px 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 9px;
+    background: #ffffff;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+}
+
+#languageSwitcher:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(217, 164, 65, 0.2);
+}
+
+
+/* =====================================
+   16. RIGHT-TO-LEFT SUPPORT
+===================================== */
+
+html[dir="rtl"] body {
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+html[dir="rtl"] .subjectItem {
+    text-align: right;
+}
+
+html[dir="rtl"] .lessonTitle {
+    text-align: right;
+}
+
+html[dir="rtl"] input,
+html[dir="rtl"] textarea {
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+html[dir="rtl"] .language-box {
+    flex-direction: row;
+}
+
+html[dir="rtl"] .reading-content {
+    text-align: right;
+}
+
+html[dir="rtl"] #closeReading {
+    margin-right: 0;
+}
