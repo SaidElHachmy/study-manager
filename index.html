@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Said ElHachmy">
+    <meta name="description" content="Study Manager - A personal study library created by Said ElHachmy.">
+
+    <!-- APP THEME -->
+    <meta name="theme-color" content="#14532d">
+
+    <!-- BROWSER & APP ICONS -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <link rel="shortcut icon" href="images/logo.png">
+
+    <!-- PAGE TITLE -->
+    <title>Study Manager | Said ElHachmy</title>
+
+    <!-- MAIN STYLESHEET -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- LOGO STYLING -->
+    <style>
+        /* ================================
+           STUDY MANAGER BRANDING
+        ================================= */
+
+        header h1 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .app-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            border-radius: 16px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+        }
+
+        .app-logo:hover {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .app-title {
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                gap: 10px;
+                font-size: 1.7rem;
+            }
+
+            .app-logo {
+                width: 52px;
+                height: 52px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ===================================
+         HEADER
+    ==================================== -->
+
+    <header>
+
+        <h1>
+            <img
+                src="images/logo.png"
+                alt="Study Manager Logo"
+                class="app-logo"
+            >
+
+            <span class="app-title">
+                Study Manager
+            </span>
+        </h1>
+
+        <p data-i18n="tagline">
+            Your personal study library
+        </p>
+
+        <div class="developer-credit">
+
+            <span data-i18n="developedBy">
+                Developed with love by
+            </span>
+
+            <a
+                href="https://saidelhachmy.github.io/#about"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Said ElHachmy
+            </a>
+
+        </div>
+
+        <!-- LANGUAGE SWITCHER -->
+
+        <div class="language-box">
+
+            <label for="languageSwitcher" data-i18n="languageLabel">
+                Language:
+            </label>
+
+            <select id="languageSwitcher">
+                <option value="en">English</option>
+                <option value="ar">العربية</option>
+                <option value="fr">Français</option>
+            </select>
+
+        </div>
+
+    </header>
+
+
+    <!-- ===================================
+         MAIN CONTENT
+    ==================================== -->
+
+    <main>
+
+        <!-- SUBJECTS SECTION -->
+
+        <section class="subjects">
+
+            <h2 data-i18n="mySubjects">
+                My Subjects
+            </h2>
+
+            <!-- SUBJECT SEARCH -->
+
+            <input
+                type="text"
+                id="searchSubject"
+                data-i18n-placeholder="searchPlaceholder"
+                placeholder="Search for a subject..."
+            >
+
+            <p id="searchMessage"></p>
+
+
+            <!-- ADD SUBJECT BUTTON -->
+
+            <button
+                id="showSubjectForm"
+                data-i18n="addSubject"
+            >
+                + Add Subject
+            </button>
+
+
+            <!-- SUBJECT FORM -->
+
+            <form id="subjectForm" hidden>
+
+                <input
+                    type="text"
+                    id="subjectName"
+                    data-i18n-placeholder="subjectPlaceholder"
+                    placeholder="Subject name"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    data-i18n="saveSubject"
+                >
+                    Save Subject
+                </button>
+
+            </form>
+
+
+            <!-- SUBJECT LIST -->
+
+            <div id="subjectList"></div>
+
+        </section>
+
+
+        <!-- LESSONS SECTION -->
+
+        <section class="lessons">
+
+            <!-- WELCOME MESSAGE -->
+
+            <div id="welcomeMessage">
+
+                <h2 data-i18n="welcome">
+                    Welcome!
+                </h2>
+
+                <p data-i18n="welcomeText">
+                    Select a subject to see its lessons.
+                </p>
+
+            </div>
+
+
+            <!-- SELECTED SUBJECT CONTENT -->
+
+            <div id="lessonSection" hidden>
+
+                <h2 id="currentSubject" dir="auto"></h2>
+
+
+                <!-- DELETE SUBJECT -->
+
+                <button
+                    id="deleteSubject"
+                    data-i18n="deleteSubject"
+                >
+                    Delete Subject
+                </button>
+
+                <hr>
+
+
+                <!-- LESSONS HEADING -->
+
+                <h3 data-i18n="myLessons">
+                    My Lessons
+                </h3>
+
+
+                <!-- ADD LESSON BUTTON -->
+
+                <button
+                    id="showLessonForm"
+                    data-i18n="addLesson"
+                >
+                    + Add New Lesson
+                </button>
+
+
+                <!-- LESSON FORM -->
+
+                <form id="lessonForm" hidden>
+
+                    <h3 id="formTitle" data-i18n="addLessonTitle">
+                        Add New Lesson
+                    </h3>
+
+                    <input
+                        type="text"
+                        id="lessonTitle"
+                        dir="auto"
+                        data-i18n-placeholder="lessonTitlePlaceholder"
+                        placeholder="Lesson title"
+                        required
+                    >
+
+                    <textarea
+                        id="lessonContent"
+                        dir="auto"
+                        data-i18n-placeholder="lessonContentPlaceholder"
+                        placeholder="Write your lesson here, or paste HTML..."
+                        rows="10"
+                        required
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        id="saveLesson"
+                        data-i18n="saveLesson"
+                    >
+                        Save Lesson
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancelLesson"
+                        data-i18n="cancel"
+                    >
+                        Cancel
+                    </button>
+
+                </form>
+
+
+                <!-- LESSON LIST -->
+
+                <div id="lessonList"></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ===================================
+         INDEPENDENT FEATURES
+    ==================================== -->
+
+    <div id="studyManagerFeatures"></div>
+
+
+    <!-- ===================================
+         LESSON READING WINDOW
+    ==================================== -->
+
+    <div
+        id="readingWindow"
+        class="reading-window"
+        hidden
+    >
+
+        <div class="reading-content">
+
+            <button
+                id="closeReading"
+                data-i18n="close"
+            >
+                ✕ Close
+            </button>
+
+            <h2 id="readingTitle" dir="auto"></h2>
+
+            <div id="readingBody" dir="auto"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================
+         DEVELOPER FOOTER
+    ==================================== -->
+
+    <footer class="developer-footer">
+
+        <p data-i18n="madeWith">
+            Made with love and dedication
+        </p>
+
+
+        <p class="developer-name">
+
+            <span data-i18n="developedByFooter">
+                Developed by
+            </span>
+
+            <a
+                href="https://saidelhachmy.github.io/#about"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Said ElHachmy
+            </a>
+
+        </p>
+
+
+        <p class="developer-role" data-i18n="developerRole">
+            Teacher & Front-End Developer
+        </p>
+
+
+        <p class="copyright" data-i18n="copyright">
+            © <span id="currentYear"></span> Said ElHachmy. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- ===================================
+         CORE JAVASCRIPT
+    ==================================== -->
+
+    <script src="script.js"></script>
+
+
+    <!-- ===================================
+         INDEPENDENT FEATURE SCRIPTS
+    ==================================== -->
+
+    <script src="features/recently-opened.js"></script>
+    <script src="features/quick-notes.js"></script>
+    <script src="features/exam-countdown.js"></script>
+    <script src="features/classroom-whiteboard.js"></script>
+    <script src="features/lesson-timer.js"></script>
+
+</body>
+
+</html>
