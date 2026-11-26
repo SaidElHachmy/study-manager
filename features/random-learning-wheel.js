@@ -1,63 +1,75 @@
 
 /* ==========================================
    RANDOM LEARNING WHEEL
-   Modes: Random Subject + Random Lesson
+   Step 1: Random Subject
+   Step 2: Random Lesson from Selected Subject
    Languages: English, Arabic, French
    ========================================== */
 
 (function () {
     "use strict";
 
-    // Prevent duplicate initialization
     if (document.getElementById("randomLearningWheel")) return;
 
     const wheelTranslations = {
         en: {
             title: "Random Learning Wheel",
-            subtitle: "Let the wheel decide what you learn next!",
-            subjectMode: "Random Subject",
-            lessonMode: "Random Lesson",
-            spin: "SPIN THE WHEEL",
+            subtitle: "Choose a subject first, then discover a lesson!",
+            subjectStep: "1. Choose a Subject",
+            lessonStep: "2. Choose a Lesson",
+            spinSubject: "SPIN FOR A SUBJECT",
+            spinLesson: "SPIN FOR A LESSON",
             spinning: "Spinning...",
             result: "Your result",
             recent: "Recent Results",
             empty: "No results yet. Spin the wheel!",
             noSubjects: "Add some subjects first!",
-            noLessons: "No lessons available in your subjects!",
+            noLessons: "This subject has no lessons yet!",
+            selectFirst: "Choose a subject first!",
+            selectedSubject: "Selected Subject",
             subject: "Subject",
             lesson: "Lesson",
+            changeSubject: "Choose Another Subject",
             again: "Spin Again"
         },
         ar: {
             title: "عجلة التعلّم العشوائية",
-            subtitle: "دع العجلة تختار لك ما ستتعلمه!",
-            subjectMode: "اختيار مادة عشوائية",
-            lessonMode: "اختيار درس عشوائي",
-            spin: "أدر العجلة",
+            subtitle: "اختر مادة أولاً، ثم اكتشف درساً منها!",
+            subjectStep: "1. اختر مادة",
+            lessonStep: "2. اختر درساً",
+            spinSubject: "اختر مادة عشوائياً",
+            spinLesson: "اختر درساً عشوائياً",
             spinning: "جارٍ الدوران...",
             result: "النتيجة",
             recent: "النتائج الأخيرة",
             empty: "لا توجد نتائج بعد. أدر العجلة!",
             noSubjects: "أضف بعض المواد أولاً!",
-            noLessons: "لا توجد دروس في المواد!",
+            noLessons: "لا توجد دروس في هذه المادة بعد!",
+            selectFirst: "اختر مادة أولاً!",
+            selectedSubject: "المادة المختارة",
             subject: "المادة",
             lesson: "الدرس",
+            changeSubject: "اختر مادة أخرى",
             again: "أدر العجلة مجدداً"
         },
         fr: {
             title: "Roue d'apprentissage aléatoire",
-            subtitle: "Laissez la roue choisir votre prochain apprentissage !",
-            subjectMode: "Matière aléatoire",
-            lessonMode: "Leçon aléatoire",
-            spin: "LANCER LA ROUE",
+            subtitle: "Choisissez d'abord une matière, puis une leçon !",
+            subjectStep: "1. Choisir une matière",
+            lessonStep: "2. Choisir une leçon",
+            spinSubject: "CHOISIR UNE MATIÈRE",
+            spinLesson: "CHOISIR UNE LEÇON",
             spinning: "En rotation...",
             result: "Votre résultat",
             recent: "Résultats récents",
             empty: "Aucun résultat. Lancez la roue !",
             noSubjects: "Ajoutez d'abord des matières !",
-            noLessons: "Aucune leçon disponible !",
+            noLessons: "Cette matière ne contient aucune leçon !",
+            selectFirst: "Choisissez d'abord une matière !",
+            selectedSubject: "Matière sélectionnée",
             subject: "Matière",
             lesson: "Leçon",
+            changeSubject: "Choisir une autre matière",
             again: "Relancer"
         }
     };
@@ -74,14 +86,17 @@
     ];
 
     let mode = "subject";
+    let selectedSubject = null;
     let isSpinning = false;
     let rotation = 0;
     let recentResults = [];
 
     const container = document.createElement("section");
     container.id = "randomLearningWheel";
+
     container.innerHTML = `
         <div class="rlw-card">
+
             <div class="rlw-heading">
                 <div class="rlw-icon">🎡</div>
                 <div>
@@ -90,9 +105,14 @@
                 </div>
             </div>
 
-            <div class="rlw-modes">
-                <button type="button" data-mode="subject" class="rlw-mode active"></button>
-                <button type="button" data-mode="lesson" class="rlw-mode"></button>
+            <div class="rlw-steps">
+                <button type="button" class="rlw-step active" data-step="subject"></button>
+                <button type="button" class="rlw-step" data-step="lesson" disabled></button>
+            </div>
+
+            <div class="rlw-selected-subject" hidden>
+                <span data-rlw="selectedSubject"></span>
+                <strong class="rlw-subject-name"></strong>
             </div>
 
             <div class="rlw-wheel-area">
@@ -108,15 +128,22 @@
                 <strong class="rlw-result-value">—</strong>
             </div>
 
+            <button type="button" class="rlw-change-subject" hidden></button>
+
             <div class="rlw-history">
                 <h3 data-rlw="recent"></h3>
                 <div class="rlw-history-list"></div>
             </div>
+
         </div>
     `;
 
-    // Inject styles
+    // ==========================================
+    // STYLES
+    // ==========================================
+
     const style = document.createElement("style");
+
     style.textContent = `
         #randomLearningWheel {
             width: 100%;
@@ -163,19 +190,19 @@
             font-size: 14px;
         }
 
-        #randomLearningWheel .rlw-modes {
+        #randomLearningWheel .rlw-steps {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        #randomLearningWheel .rlw-mode {
+        #randomLearningWheel .rlw-step {
             border: 1px solid #d1d5db;
             background: transparent;
             color: inherit;
-            padding: 10px 17px;
+            padding: 11px 17px;
             border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
@@ -183,10 +210,35 @@
             transition: .2s;
         }
 
-        #randomLearningWheel .rlw-mode.active {
+        #randomLearningWheel .rlw-step.active {
             background: #15803d;
             color: white;
             border-color: #15803d;
+        }
+
+        #randomLearningWheel .rlw-step:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        #randomLearningWheel .rlw-selected-subject {
+            margin: 0 auto 20px;
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(21,128,61,.09);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        #randomLearningWheel .rlw-selected-subject span {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        #randomLearningWheel .rlw-subject-name {
+            color: #15803d;
+            font-size: 18px;
         }
 
         #randomLearningWheel .rlw-wheel-area {
@@ -281,6 +333,21 @@
             overflow-wrap: anywhere;
         }
 
+        #randomLearningWheel .rlw-change-subject {
+            margin-top: 12px;
+            padding: 10px 16px;
+            border: 1px solid #15803d;
+            border-radius: 10px;
+            background: transparent;
+            color: #15803d;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #randomLearningWheel .rlw-change-subject:hover {
+            background: rgba(21,128,61,.08);
+        }
+
         #randomLearningWheel .rlw-history {
             margin-top: 25px;
             text-align: start;
@@ -322,7 +389,7 @@
                 font-size: 12px;
             }
 
-            #randomLearningWheel .rlw-mode {
+            #randomLearningWheel .rlw-step {
                 padding: 9px 12px;
                 font-size: 13px;
             }
@@ -335,8 +402,10 @@
 
     document.head.appendChild(style);
 
-    // Connect the feature to the existing app.
-    // Change this target if you want the wheel somewhere else.
+    // ==========================================
+    // INSERT INTO STUDY MANAGER
+    // ==========================================
+
     const target =
         document.getElementById("studyManagerFeatures") ||
         document.querySelector("main") ||
@@ -346,12 +415,30 @@
 
     const canvas = container.querySelector(".rlw-canvas");
     const ctx = canvas.getContext("2d");
+
     const spinButton = container.querySelector(".rlw-spin");
     const resultValue = container.querySelector(".rlw-result-value");
     const historyList = container.querySelector(".rlw-history-list");
 
+    const subjectButton = container.querySelector('[data-step="subject"]');
+    const lessonButton = container.querySelector('[data-step="lesson"]');
+
+    const selectedSubjectBox =
+        container.querySelector(".rlw-selected-subject");
+
+    const selectedSubjectName =
+        container.querySelector(".rlw-subject-name");
+
+    const changeSubjectButton =
+        container.querySelector(".rlw-change-subject");
+
+    // ==========================================
+    // LANGUAGE
+    // ==========================================
+
     function getLanguage() {
         const language = document.documentElement.lang || "en";
+
         return wheelTranslations[language] ? language : "en";
     }
 
@@ -359,35 +446,47 @@
         return wheelTranslations[getLanguage()][key];
     }
 
+    // ==========================================
+    // DATA
+    // ==========================================
+
     function getSubjects() {
-        // Uses the existing global subjects array from Study Manager.
         return Array.isArray(subjects) ? subjects : [];
     }
 
     function getItems() {
-        const allSubjects = getSubjects();
-
         if (mode === "subject") {
-            return allSubjects
-                .map(subject => subject.name)
-                .filter(name => typeof name === "string" && name.trim());
+            return getSubjects()
+                .filter(subject =>
+                    subject &&
+                    typeof subject.name === "string" &&
+                    subject.name.trim()
+                )
+                .map(subject => subject.name);
         }
 
-        return allSubjects.flatMap(subject =>
-            (Array.isArray(subject.lessons) ? subject.lessons : [])
-                .filter(lesson => lesson && typeof lesson.title === "string")
-                .map(lesson => ({
-                    title: lesson.title,
-                    subject: subject.name
-                }))
+        if (!selectedSubject) return [];
+
+        const subject = getSubjects().find(
+            item => item.name === selectedSubject
         );
+
+        if (!subject || !Array.isArray(subject.lessons)) {
+            return [];
+        }
+
+        return subject.lessons
+            .filter(lesson =>
+                lesson &&
+                typeof lesson.title === "string" &&
+                lesson.title.trim()
+            )
+            .map(lesson => lesson.title);
     }
 
-    function getItemLabel(item) {
-        return mode === "subject"
-            ? item
-            : item.title;
-    }
+    // ==========================================
+    // WHEEL DRAWING
+    // ==========================================
 
     function drawWheel(items) {
         const size = canvas.width;
@@ -401,11 +500,13 @@
             ctx.arc(center, center, radius, 0, Math.PI * 2);
             ctx.fillStyle = "#9ca3af";
             ctx.fill();
+
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText("🎓", center, center);
+
             return;
         }
 
@@ -419,6 +520,7 @@
             ctx.moveTo(center, center);
             ctx.arc(center, center, radius, start, end);
             ctx.closePath();
+
             ctx.fillStyle = colors[index % colors.length];
             ctx.fill();
 
@@ -427,6 +529,7 @@
             ctx.stroke();
 
             ctx.save();
+
             ctx.translate(center, center);
             ctx.rotate(start + slice / 2);
 
@@ -435,16 +538,22 @@
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 18px sans-serif";
 
-            let label = getItemLabel(item);
+            let label = item;
             const maxLength = 17;
+
             if (label.length > maxLength) {
                 label = label.slice(0, maxLength - 1) + "…";
             }
 
             ctx.fillText(label, radius - 22, 0);
+
             ctx.restore();
         });
     }
+
+    // ==========================================
+    // RECENT RESULTS
+    // ==========================================
 
     function updateHistory() {
         historyList.innerHTML = "";
@@ -456,11 +565,17 @@
 
         recentResults.forEach((result, index) => {
             const item = document.createElement("div");
+
             item.className = "rlw-history-item";
             item.textContent = `${index + 1}. ${result}`;
+
             historyList.appendChild(item);
         });
     }
+
+    // ==========================================
+    // INTERFACE
+    // ==========================================
 
     function updateInterface() {
         const lang = getLanguage();
@@ -472,24 +587,35 @@
             element.textContent = translations[element.dataset.rlw];
         });
 
-        container.querySelector('[data-mode="subject"]').textContent =
-            translations.subjectMode;
+        subjectButton.textContent = translations.subjectStep;
+        lessonButton.textContent = translations.lessonStep;
 
-        container.querySelector('[data-mode="lesson"]').textContent =
-            translations.lessonMode;
+        subjectButton.classList.toggle("active", mode === "subject");
+        lessonButton.classList.toggle("active", mode === "lesson");
 
-        spinButton.textContent = translations.spin;
+        lessonButton.disabled = !selectedSubject;
 
-        container.querySelectorAll(".rlw-mode").forEach(button => {
-            button.classList.toggle(
-                "active",
-                button.dataset.mode === mode
-            );
-        });
+        selectedSubjectBox.hidden = !selectedSubject;
+
+        if (selectedSubject) {
+            selectedSubjectName.textContent = selectedSubject;
+        }
+
+        changeSubjectButton.hidden = !selectedSubject;
+        changeSubjectButton.textContent = translations.changeSubject;
+
+        spinButton.textContent =
+            mode === "subject"
+                ? translations.spinSubject
+                : translations.spinLesson;
 
         updateHistory();
         drawWheel(getItems());
     }
+
+    // ==========================================
+    // SPINNING
+    // ==========================================
 
     function spinWheel() {
         if (isSpinning) return;
@@ -498,28 +624,35 @@
 
         if (!items.length) {
             resultValue.textContent =
-                mode === "subject" ? t("noSubjects") : t("noLessons");
+                mode === "subject"
+                    ? t("noSubjects")
+                    : selectedSubject
+                        ? t("noLessons")
+                        : t("selectFirst");
+
             return;
         }
 
         isSpinning = true;
+
         spinButton.disabled = true;
         spinButton.textContent = t("spinning");
 
         const selectedIndex = Math.floor(Math.random() * items.length);
         const slice = (Math.PI * 2) / items.length;
 
-        // Position the selected segment under the pointer at the top.
         const desiredAngle =
             Math.PI * 2 -
             (selectedIndex + 0.5) * slice;
 
         const currentAngle = rotation % (Math.PI * 2);
+
         const extraRotation =
             (desiredAngle - currentAngle + Math.PI * 2) %
             (Math.PI * 2);
 
         const startRotation = rotation;
+
         const finalRotation =
             startRotation + (Math.PI * 2 * 5) + extraRotation;
 
@@ -527,7 +660,11 @@
         const startTime = performance.now();
 
         function animate(now) {
-            const progress = Math.min((now - startTime) / duration, 1);
+            const progress = Math.min(
+                (now - startTime) / duration,
+                1
+            );
+
             const eased = 1 - Math.pow(1 - progress, 4);
 
             rotation =
@@ -547,41 +684,82 @@
         requestAnimationFrame(animate);
     }
 
+    // ==========================================
+    // FINISH SPIN
+    // ==========================================
+
     function finishSpin(selected) {
-        const label = getItemLabel(selected);
+        if (mode === "subject") {
+            selectedSubject = selected;
 
-        resultValue.textContent =
-            mode === "subject"
-                ? label
-                : `${selected.title} — ${selected.subject}`;
+            resultValue.textContent = selected;
 
-        recentResults.unshift(
-            mode === "subject"
-                ? `${t("subject")}: ${label}`
-                : `${t("lesson")}: ${selected.title} (${selected.subject})`
-        );
+            recentResults.unshift(
+                `${t("subject")}: ${selected}`
+            );
+
+            // Automatically move to the lesson-selection stage.
+            mode = "lesson";
+
+        } else {
+            resultValue.textContent = selected;
+
+            recentResults.unshift(
+                `${t("lesson")}: ${selected} (${selectedSubject})`
+            );
+        }
 
         recentResults = recentResults.slice(0, 5);
-        updateHistory();
 
         isSpinning = false;
         spinButton.disabled = false;
+
+        updateInterface();
+
         spinButton.textContent = t("again");
     }
 
-    container.querySelectorAll(".rlw-mode").forEach(button => {
-        button.addEventListener("click", () => {
-            if (isSpinning) return;
+    // ==========================================
+    // EVENTS
+    // ==========================================
 
-            mode = button.dataset.mode;
-            resultValue.textContent = "—";
-            updateInterface();
-        });
+    subjectButton.addEventListener("click", () => {
+        if (isSpinning) return;
+
+        mode = "subject";
+        selectedSubject = null;
+
+        resultValue.textContent = "—";
+
+        updateInterface();
+    });
+
+    lessonButton.addEventListener("click", () => {
+        if (isSpinning || !selectedSubject) return;
+
+        mode = "lesson";
+        resultValue.textContent = "—";
+
+        updateInterface();
+    });
+
+    changeSubjectButton.addEventListener("click", () => {
+        if (isSpinning) return;
+
+        mode = "subject";
+        selectedSubject = null;
+
+        resultValue.textContent = "—";
+
+        updateInterface();
     });
 
     spinButton.addEventListener("click", spinWheel);
 
-    // Keep the wheel language synchronized with the existing language switcher.
+    // ==========================================
+    // LANGUAGE SWITCHER OBSERVER
+    // ==========================================
+
     const languageObserver = new MutationObserver(() => {
         updateInterface();
     });
@@ -591,5 +769,10 @@
         attributeFilter: ["lang", "dir"]
     });
 
+    // ==========================================
+    // INITIALIZE
+    // ==========================================
+
     updateInterface();
+
 })();
